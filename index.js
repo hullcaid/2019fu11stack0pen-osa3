@@ -27,9 +27,12 @@ let persons = [
 	},
 ]
 
-app.get('/API/persons', (request, response) => {
-	console.log('request received, sending')
+app.get('/api/persons', (request, response) => {
 	response.json(persons);
+});
+
+app.get('/info', (request, response) => {
+	response.send(`<p>Puhelinluettelossa ${persons.length} henkilön tiedot<br>${new Date()}`);
 });
 
 const PORT = 3001;
