@@ -8,22 +8,22 @@ let persons = [
 	{
 		id: 1,
 		name: 'Arto Hellas',
-		Number: '045-1236543',
+		number: '045-1236543',
 	},
 	{
 		id: 2,
 		name: 'Arto Järvinen',
-		Number: '041-21423123',
+		number: '041-21423123',
 	},
 	{
 		id: 3,
 		name: 'Lea Kutvonen',
-		Number: '040-4323234',
+		number: '040-4323234',
 	},
 	{
 		id: 4,
 		name: 'Martti Tienari',
-		Number: '09-784232',
+		number: '09-784232',
 	},
 ]
 
@@ -61,10 +61,10 @@ app.delete('/api/persons/:id', (request, response) => {
 	const id = Number(request.params.id);
 	//Save the length of persons array before trying to remove the requested object
 	const oldLength = persons.length;
-	console.log(oldLength)
+	//console.log(oldLength)
 	//Filter the objects without the requested id from the persons array and save the result to persons 
 	persons = persons.filter(person => person.id !== id);
-	console.log(oldLength, persons.length)
+	//console.log(oldLength, persons.length)
 	//Return code 204
 	if (persons.length !== oldLength) {
 		//if the array legth changed, removal was succesful, return 204
@@ -75,6 +75,33 @@ app.delete('/api/persons/:id', (request, response) => {
 	};
 	
 });
+
+//Function for generating unique Ids
+const getUniqueId = () => {
+	const id = Math.floor(Math.random() * 100000000)+1;
+	console.log(id)
+	return id;
+	 
+}
+
+//Function for adding objects
+app.post('/api/persons', (request, response) => {
+	//Get request body
+	const body =  request.body
+
+	//Construct a new person object using fields of the request body. Id generated using a separate function.
+	const person ={
+		id: getUniqueId(),
+		name: body.name,
+		number: body.number,
+	};
+
+	//Add the new object to persons.
+	persons = persons.concat(person);
+
+	//Send the new object as a response.
+	response.json(person);
+})
 
 const PORT = 3001;
 app.listen(PORT)
