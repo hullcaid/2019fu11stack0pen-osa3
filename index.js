@@ -115,4 +115,4 @@ const PORT = 3001;
 app.listen(PORT)
 	console.log(`server running, port: ${PORT}`);
 
-//dev log: 2.6: 2h, 3.6.: 1h, 4.6.: 1,5h
+//dev log: 2.6: 2h, 3.6.: 1h, 4.6.: 1,5h, 5.6.:1,25h
