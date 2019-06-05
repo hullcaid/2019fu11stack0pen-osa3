@@ -8,22 +8,22 @@ let persons = [
 	{
 		id: 1,
 		name: 'Arto Hellas',
-		number: '045-1236543',
+		number: '045-1236',
 	},
 	{
 		id: 2,
 		name: 'Arto Järvinen',
-		number: '041-21423123',
+		number: '041-2142',
 	},
 	{
 		id: 3,
 		name: 'Lea Kutvonen',
-		number: '040-4323234',
+		number: '040-4323',
 	},
 	{
 		id: 4,
 		name: 'Martti Tienari',
-		number: '09-784232',
+		number: '09-7842',
 	},
 ]
 
@@ -88,6 +88,14 @@ const getUniqueId = () => {
 app.post('/api/persons', (request, response) => {
 	//Get request body
 	const body =  request.body
+
+	if(!body.name|!body.number){
+		return response.status(400).json({error: 'name or number missing'});
+	};
+
+	if(persons.find(person => person.name === body.name)) {
+		return response.status(400).json({error: 'name must be unique'});
+	}
 
 	//Construct a new person object using fields of the request body. Id generated using a separate function.
 	const person ={
