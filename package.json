@@ -20,7 +20,8 @@
   "homepage": "https://github.com/hullcaid/2019fu11stack0pen-osa3#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "http": "0.0.0"
+    "http": "0.0.0",
+    "morgan": "^1.9.1"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
