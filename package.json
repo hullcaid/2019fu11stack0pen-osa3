@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/hullcaid/2019fu11stack0pen-osa3#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "http": "0.0.0",
     "morgan": "^1.9.1"
