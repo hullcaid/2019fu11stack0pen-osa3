@@ -50,6 +50,21 @@ app.delete('/api/persons/:id', (request, response, next) => {
 		.catch(error => next(error));
 });
 
+//Function to modify document already in database
+app.put('/api/persons/:id', (request, response, next) => {
+	const body = request.body;
+
+	const entry = {
+		number: body.number,
+	}
+
+	Entry.findByIdAndUpdate(request.params.id, entry, {new: true})
+		.then(updatedEntry => {
+			response.json(updatedEntry.toJSON());
+		})
+		.catch(error => next(error));
+}) 
+
 //Function for adding objects
 app.post('/api/persons', (request, response, next) => {
 	//Get request body
