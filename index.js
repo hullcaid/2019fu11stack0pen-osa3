@@ -73,25 +73,22 @@ app.post('/api/persons', (request, response) => {
 		return response.status(400).json({error: 'name or number missing'});
 	};
 
-	if(persons.find(person => person.name === body.name)) {
+	/* if(persons.find(person => person.name === body.name)) {
 		return response.status(400).json({error: 'name must be unique'});
-	}
+	} */
 
-	//Construct a new person object using fields of the request body. Id generated using a separate function.
-	const person ={
-		id: getUniqueId(),
+	const entry = new Entry({
 		name: body.name,
 		number: body.number,
-	};
+	});
 
-	//Add the new object to persons.
-	persons = persons.concat(person);
-
-	//Send the new object as a response.
-	response.json(person);
+	entry.save().then(savedEntry => {
+		response.json(savedEntry.toJSON());
+	});
 })
 
 const PORT = process.env.PORT;
 app.listen(PORT)
 	console.log(`server running, port: ${PORT}`);
+
 
