@@ -37,7 +37,17 @@ app.get('/api/persons/:id', (request, response) => {
 
 //Function to remove contacts from the database
 app.delete('/api/persons/:id', (request, response) => {
-	//Get id from request and transform it to Number
+	Entry.findByIdAndRemove(request.params.id)
+		.then(result => {
+			response.status(204).end();
+		})
+		.catch(error => {
+			console.log(error);
+			response.status(400).end();
+		});
+	
+	
+	/* //Get id from request and transform it to Number
 	const id = Number(request.params.id);
 	//Save the length of persons array before trying to remove the requested object
 	const oldLength = persons.length;
@@ -52,7 +62,7 @@ app.delete('/api/persons/:id', (request, response) => {
 	} else {
 		//If the array is the same length, removal did not succeed, return 404
 		response.status(404).end();
-	};
+	}; */
 	
 });
 
