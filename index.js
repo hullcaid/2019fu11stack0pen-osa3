@@ -29,53 +29,29 @@ app.get('/info', (request, response) => {
 });
 
 //Function to return single contact. If the contact does not exists, returns 404
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
 	Entry.findById(request.params.id).then(entry => {
-		response.json(entry.toJSON());
+		if(entry) {
+			response.json(entry.toJSON());
+		} else {
+			response.status(404).end();
+		}
+		
 	})
+	.catch(error => next(error))
 });
 
 //Function to remove contacts from the database
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
 	Entry.findByIdAndRemove(request.params.id)
 		.then(result => {
 			response.status(204).end();
 		})
-		.catch(error => {
-			console.log(error);
-			response.status(400).end();
-		});
-	
-	
-	/* //Get id from request and transform it to Number
-	const id = Number(request.params.id);
-	//Save the length of persons array before trying to remove the requested object
-	const oldLength = persons.length;
-	//console.log(oldLength)
-	//Filter the objects without the requested id from the persons array and save the result to persons 
-	persons = persons.filter(person => person.id !== id);
-	//console.log(oldLength, persons.length)
-	//Return code 204
-	if (persons.length !== oldLength) {
-		//if the array legth changed, removal was succesful, return 204
-		response.status(204).end();
-	} else {
-		//If the array is the same length, removal did not succeed, return 404
-		response.status(404).end();
-	}; */
-	
+		.catch(error => next(error));
 });
 
-//Function for generating unique Ids
-const getUniqueId = () => {
-	const id = Math.floor(Math.random() * 100000000)+1;
-	console.log(id)
-	return id;
-	 
-}
-
 //Function for adding objects
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
 	//Get request body
 	const body =  request.body
 
@@ -94,8 +70,21 @@ app.post('/api/persons', (request, response) => {
 
 	entry.save().then(savedEntry => {
 		response.json(savedEntry.toJSON());
-	});
+	})
+	.catch(error => next(error));
 })
+
+const errorHandler =(error, request, response, next) => {
+	console.error(error.message);
+
+	if(error.name === 'CastError' && error.kind == 'ObjectId') {
+		return response.status(400).send({ error: 'malformatted id'});
+	}
+
+	next(error);
+}
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT)
