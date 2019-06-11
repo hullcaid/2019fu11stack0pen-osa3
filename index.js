@@ -1,9 +1,11 @@
 //status: tehtävä 3.11
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan')
 const cors = require('cors')
+const Entry = require('./models/entry')
 
 app.use(express.static('build'));
 app.use(cors());
@@ -12,33 +14,12 @@ app.use(bodyParser.json());
 morgan.token('payload', function getBody(request) {return JSON.stringify(request.body)} )
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :payload'))
-let persons = [
-	{
-		id: 1,
-		name: 'Arto Hellas',
-		number: '045-1236',
-	},
-	{
-		id: 2,
-		name: 'Arto Järvinen',
-		number: '041-2142',
-	},
-	{
-		id: 3,
-		name: 'Lea Kutvonen',
-		number: '040-4323',
-	},
-	{
-		id: 4,
-		name: 'Martti Tienari',
-		number: '09-7842',
-	},
-]
 
-//Function to return the whole list of contacts
+//Function to return the whole list of contacts. Uses the document.find-function to find all entries and sends them as a json in response
 app.get('/api/persons', (request, response) => {
-	//Sends the persons array as json
-	response.json(persons);
+	Entry.find({}).then(entries=> {
+		response.json(entries.map(entry => entry.toJSON()))
+	})
 });
 
 //Function to return the status of the database
@@ -49,18 +30,9 @@ app.get('/info', (request, response) => {
 
 //Function to return single contact. If the contact does not exists, returns 404
 app.get('/api/persons/:id', (request, response) => {
-	//Gets the id from the request
-	const id = Number(request.params.id);
-	//Finds the person object from persons array if it exists
-	const person = persons.find(person => person.id === id);
-
-	if (person) {
-		//If the object with correct id is found, sends it as json
-		response.json(person);
-	} else {
-		//If the object was not found, sends 404
-		response.status(404).end();
-	};
+	Entry.findById(request.params.id).then(entry => {
+		response.json(entry.toJSON());
+	})
 });
 
 //Function to remove contacts from the database
@@ -97,7 +69,7 @@ app.post('/api/persons', (request, response) => {
 	//Get request body
 	const body =  request.body
 
-	if(!body.name|!body.number){
+	if(!body.name||!body.number){
 		return response.status(400).json({error: 'name or number missing'});
 	};
 
@@ -119,7 +91,7 @@ app.post('/api/persons', (request, response) => {
 	response.json(person);
 })
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT)
 	console.log(`server running, port: ${PORT}`);
 
