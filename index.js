@@ -59,8 +59,8 @@ app.put('/api/persons/:id', (request, response, next) => {
 	const entry = {
 		number: body.number,
 	}
-
-	Entry.findByIdAndUpdate(request.params.id, entry, {new: true})
+	//tehtävänannossa sanottiin että validiointi pitää tehdä vain HTTP POST-kutsuille, mutta frontti toimi tyhmaästi, niin laitoin validioinnit tähänkin.
+	Entry.findByIdAndUpdate(request.params.id, entry, {new: true, runValidators: true, context: 'query'})
 		.then(updatedEntry => {
 			response.json(updatedEntry.toJSON());
 		})
