@@ -23,9 +23,11 @@ app.get('/api/persons', (request, response) => {
 });
 
 //Function to return the status of the database
-app.get('/info', (request, response) => {
-	//Sends a infostring
-	response.send(`<p>Puhelinluettelossa ${persons.length} henkilön tiedot<br>${new Date()}`);
+app.get('/info', (request, response, next) => {
+	Entry.estimatedDocumentCount().then(count =>{
+		response.send(`<p>Puhelinluettelossa ${count} henkilön tiedot<br>${new Date()}`);
+	})
+	.catch(error => next(error))
 });
 
 //Function to return single contact. If the contact does not exists, returns 404
@@ -73,10 +75,6 @@ app.post('/api/persons', (request, response, next) => {
 	if(!body.name||!body.number){
 		return response.status(400).json({error: 'name or number missing'});
 	};
-
-	/* if(persons.find(person => person.name === body.name)) {
-		return response.status(400).json({error: 'name must be unique'});
-	} */
 
 	const entry = new Entry({
 		name: body.name,
